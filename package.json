@@ -1,6 +1,6 @@
 {
   "name": "what-is-surprise",
-  "version": "0.1.2",
+  "version": "0.1.3",
   "description": "translate tool",
   "scripts": {
     "build": "node build.js",

@@ -4,7 +4,7 @@ const path = require('path')
 
 child_process.execSync('rm -rf ./dist')
 child_process.execSync('tsc')
-child_process.execSync('cp README.md ./dist/')
+child_process.execSync('cp README.md surprise.jpeg ./dist/')
 
 const pkg = require('./package.json')
 
