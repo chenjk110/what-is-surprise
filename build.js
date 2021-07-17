@@ -10,5 +10,6 @@ const pkg = require('./package.json')
 
 Reflect.set(pkg, 'main', 'index.js')
 Reflect.deleteProperty(pkg, 'scripts')
+Reflect.deleteProperty(pkg, 'devDependencies')
 
 fs.writeFileSync('./dist/package.json', JSON.stringify(pkg, null, 2))
