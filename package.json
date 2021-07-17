@@ -1,0 +1,24 @@
+{
+  "name": "what-is-surprise",
+  "version": "0.1.2",
+  "description": "translate tool",
+  "scripts": {
+    "build": "node build.js",
+    "pub": "cd dist && npm publish --registry=https://registry.npmjs.org"
+  },
+  "keywords": [
+    "百度翻译"
+  ],
+  "author": "Corro",
+  "license": "MIT",
+  "devDependencies": {
+    "@types/md5": "^2.3.1",
+    "@types/node": "^16.3.3",
+    "typescript": "^4.3.5"
+  },
+  "dependencies": {
+    "md5": "^2.3.0",
+    "tslib": "^2.3.0",
+    "axios": "^0.21.1"
+  }
+}
