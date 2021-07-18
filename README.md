@@ -18,110 +18,132 @@ npm i what-is-surprise
 yarn add what-is-surprise
 ```
 
+## 模块导入方式
+```js
+const {
+  sdks, // 包含 Baidu、Youdao 命名空间，下方两个命名空间等效
+  Baidu, // 百度翻译 SDK 相关 API 的命名空间
+  Youdao, // 有道翻译 SDK 相关 API 的命名空间
+} = require('what-is-surprise')
+```
+```ts
+import { sdks, Baidu, Youdao } from 'what-is-surprise'
+```
 ## 简单例子
 
+** Class **
+
 ```ts
-import { BaiduFanyi } from 'what-is-surprise'
+import { Baidu } from 'what-is-surprise'
 
-const baiduFanyiSdk = BaiduFanyi.createTranslator()
+const translator = Baidu.BaiduFanyi.createTranslator()
 
-baiduFanyiSdk.setLangFrom('zh')
-baiduFanyiSdk.setLangTo('en')
-baiduFanyiSdk.addContent('翻译翻译、什么叫TMD的惊喜！')
-baiduFanyiSdk.translate().then(res => {
+translator.setLangFrom('zh')
+translator.setLangTo('en')
+translator.addContent('翻译翻译、什么叫TMD的惊喜！')
+translator.translate().then(res => {
   // 成功
 }, err => {
   // 未成功
 })
 ```
 
+** CommonJS **
+```js
+const { Baidu } = require('what-is-surprise')
 
+const translator = Baidu.BaiduFanyi.createTranslator()
 
-## 百度翻译API
+translator.setLangFrom('zh')
+translator.setLangTo('en')
+translator.addContent('翻译翻译、什么叫TMD的惊喜！')
+translator.translate().then(res => {
+  // 成功
+}, err => {
+  // 未成功
+})
+
+```
+
+## 通用API
 
 > - 对于语言配置字段 `from`，`to` 可以参考官方文档，默认值都为 `auto` 。
 >
 > - 请求返回数据结构课参考官方文档。
+> - 对于不同`翻译 API `的详细参数配置、返回结果数据结构、请对应官方文档或在线调试进行参考。
 
 ```ts
-class BaiduFanyi {
-    /**
-     * 已经添加的内容，通常通过 API 方法操作
-     */
-    contents: Set<string>
-   
-    /**
-     * 默认的官方 API 地址
-     */
-    static DEFAULT_API_URL: "https://api.fanyi.baidu.com/api/trans/vip/translate"
-   
-    /**
-     * 创建翻译实例
-     */
-    static createTranslator(options?: Partial<IBaiduFanyiConfig> & {
-        url?: string
-    }): BaiduFanyi
-
-    /**
-     * 获得配置实例，更新对应的配置
-     */
-    getConfig(): BaiduFanyiReqConfig
-   
-    /**
-     * 添加内容
-     */
-    addContent(content: string): this
-
-    /**
-     * 删除内容
-     */
-    removeContent(content: string): this
-
-    /**
-     * 清除所有已添加内容
-     */
-    clearContent(): this
-
-    /**
-     * 更换内容
-     * @param newContent 新的内容
-     * @param oldContent 旧内容
-     */
-    replaceContent(newContent: string, oldContent: string): void
-    
-    /**
-     * 更新 API 地址
-     */
-    setApiUrl(url: string): void
-    
-    /**
-     * 设置源语言，更多语言代码可查阅官方文档
-     */
-    setLangFrom(from: Lang): this
-
-    /**
-     * 设置目标语言，更多语言代码可查阅官方文档
-     */
-    setLangTo(to: Lang): this
-
-    /**
-     * 交换配置中 from 和 to 的语言设置
-     */
-    swapLang(): this
-
-    /**
-     * 翻译
-     */
-    translate<F extends Lang, T extends Lang>(): Promise<BaiduFanyiResult<F, T>>
-}
+  /**
+   * 对应参数配置，可直接修改或者通过封装的 API 方法进行修改
+   */
+  config: C
+  /**
+   * SDK API 地址
+   */
+  url: string
+  /**
+   * 翻译的内容，结合中每个值代表一个段落部分
+   */
+  contents: Set<string>
+  /**
+   * 获得配置，可以从 API 实例进行更新，或者直接操作
+   */
+  getConfig(): C
+  /**
+   * 更新 API 地址，通常在 config 配置
+   * @param url API地址
+   */
+  setApiUrl(url: string): this
+  /**
+   * 设置源语言
+   * @param from 源语言
+   */
+  setLangFrom(from: L): this
+  /**
+   * 设置目标语言
+   * @param to 目标语言
+   */
+  setLangTo(to: L): this
+  /**
+   * 交换配置中 from 和 to 的语言设置
+   */
+  swapLang(): this
+  /**
+   * 快速创建对应的 SDK API 请求参数对象
+   */
+  createRequestBody(): any
+  /**
+   * 创建当前缓存的段落内容文本，以 `\n` 进行连接
+   */
+  generateContent(): string
+  /**
+   * 添加内容
+   * @param content 要添加的内容
+   */
+  addContent(content: string): this
+  /**
+   * 删除内容
+   * @param content 删除的内容
+   */
+  removeContent(content: string): this
+  /**
+   * 清除所有已添加内容
+   */
+  clearContent(): this
+  /**
+   * 更换内容
+   * @param newContent 新的内容
+   * @param oldContent 旧内容
+   */
+  replaceContent(newContent: string, oldContent: string): this
 ```
 
 ### 使用例子
 
 ```ts
-import { BaiduFanyi } from 'what-is-surprise'
+import { Baidu } from 'what-is-surprise'
 
-const translator = BaiduFanyi.createTranslator({ appid: '12341234', key: '12341234', salt: '12341234' })
+const translator = Baidu.BaiduFanyi.createTranslator({ appid: '12341234', key: '12341234', salt: '12341234' })
 
 /**
  * 设置自定义 API URL
@@ -165,4 +187,3 @@ translator.translate<'zh', 'en'>().then(result => {
   ]
 }
 ```
-
