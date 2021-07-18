@@ -1,7 +1,9 @@
+import axios, { AxiosResponse } from 'axios'
+
 import { Lang } from './constants'
 import { IYoudaoFanyiConfig, YoudaoFanyiConfig } from './YoudaoFanyiConfig'
-import { BaseFanyi, IBaseFanyi } from '../../utils'
-import axios from 'axios'
+import { assignOptions } from '../../utils'
+import { BaseFanyi, IBaseFanyi } from '../../BaseFanyi'
 
 type WebResult = {
   /** 查询的文本 */
@@ -46,7 +48,7 @@ type YoudaoFanyiResult = {
   // 有道词典-网络释义，该结果不一定存在
   web?: WebResult[],
 } | {
-  errorCode: '1',
+  errorCode: '0',
   //小语种翻译，一定存在
   translation: string[],
   dict: {
@@ -62,26 +64,30 @@ type YoudaoFanyiResult = {
   //查询文本的发音地址
   speakUrl: string
 } | {
-  errorCode: string,
+  errorCode: string
 }
 
+type YoudaoFanyiOptions = Partial<IYoudaoFanyiConfig & { url: string }>
+
+const onRespond = <T extends AxiosResponse<YoudaoFanyiResult>>(res: T) => {
+  if (res.data?.errorCode !== '0') return Promise.reject(res.data)
+  return Promise.resolve(res.data)
+}
 export class YoudaoFanyi extends BaseFanyi<Lang> implements IBaseFanyi<YoudaoFanyiConfig> {
+  static DEFAULT_API_URL = 'https://openapi.youdao.com/api' as const
+
   config = new YoudaoFanyiConfig
   url: string = YoudaoFanyi.DEFAULT_API_URL
 
   requestMethod: 'get' | 'post' = 'get'
 
-  static DEFAULT_API_URL = 'https://openapi.youdao.com/api' as const
+  constructor(options?: YoudaoFanyiOptions) {
+    super()
+    assignOptions(this, options)
+  }
 
-  static createTranslator(options?: Partial<IYoudaoFanyiConfig & { url: string }>) {
-    const instance = new YoudaoFanyi
-    if (options?.url) {
-      instance.url = options.url
-      options = { ...options }
-      Reflect.deleteProperty(options, 'url')
-    }
-    Object.assign(instance.config, options)
-    return instance
+  static createTranslator(options?: YoudaoFanyiOptions) {
+    return assignOptions(new YoudaoFanyi, options)
   }
 
   setRequestMethod(method: 'get' | 'post') {
@@ -95,16 +101,16 @@ export class YoudaoFanyi extends BaseFanyi<Lang> implements IBaseFanyi<YoudaoFan
     const params = this.createRequestBody()
 
     if (requestMethod === 'get') {
-      return axios.get(url, {
+      return axios.get<YoudaoFanyiResult>(url, {
         withCredentials: true,
         params,
-      })
+      }).then(onRespond)
     }
 
     if (requestMethod === 'post') {
-      return axios.post(url, params, {
+      return axios.post<YoudaoFanyiResult>(url, params, {
         withCredentials: true
-      })
+      }).then(onRespond)
     }
 
     return Promise.reject(new Error(`Method '${requestMethod}' is not Supported`))

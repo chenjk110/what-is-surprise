@@ -1,14 +1,15 @@
 import Crypto from 'crypto-js'
-import { omit, IBaseFanyiConfig } from '../../utils'
 import { Lang } from './constants'
+import { omit } from '../../utils'
+import { IBaseFanyiConfig } from '../../BaseFanyi'
 
-export interface IYoudaoFanyiConfig {
+export interface IYoudaoFanyiConfig<L extends string = Lang> {
   /** 待翻译文本  必须是UTF-8编码 */
   q: string,
   /** 源语言  参考下方 支持语言 (可设置为auto) */
-  from: Lang,
+  from: L,
   /** 目标语言  参考下方 支持语言 (可设置为auto) */
-  to: Lang,
+  to: L,
   /** 应用ID  可在 应用管理 查看 */
   appKey: string,
   /** 应用密钥 */
@@ -33,7 +34,7 @@ export interface IYoudaoFanyiConfig {
   vocabId?: string,
 }
 
-export class YoudaoFanyiConfig implements IYoudaoFanyiConfig, IBaseFanyiConfig {
+export class YoudaoFanyiConfig implements IYoudaoFanyiConfig, IBaseFanyiConfig<Lang> {
   q: string = ''
   from: Lang = 'auto'
   to: Lang = 'auto'
@@ -59,6 +60,36 @@ export class YoudaoFanyiConfig implements IYoudaoFanyiConfig, IBaseFanyiConfig {
 
   updateQuery(query: string) {
     this.q = query
+    return this
+  }
+
+  updateAppKey(appKey: string) {
+    this.appKey = appKey
+    return this
+  }
+
+  updateAppSecret(appSecret: string) {
+    this.appSecret = appSecret
+    return this
+  }
+
+  updateSalt(salt = Date.now().toString()) {
+    this.salt = salt
+    return this
+  }
+
+  udpateCurtime(curtime = new Date().toString()) {
+    this.curtime = curtime
+    return this
+  }
+
+  setLangFrom(lang: Lang) {
+    this.from = lang
+    return this
+  }
+
+  setLangTo(lang: Lang) {
+    this.to = lang
     return this
   }
 

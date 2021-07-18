@@ -1,7 +1,8 @@
 import axios from 'axios'
 import { Lang, ErrorCode } from './constants'
 import { BaiduFanyiReqConfig, IBaiduFanyiConfig } from './BaiduFanyiConfig'
-import { BaseFanyi, IBaseFanyi } from '../../utils'
+import { BaseFanyi, IBaseFanyi } from '../../BaseFanyi'
+import { assignOptions } from '../../utils'
 
 export type TransResult = { src: string, dst: string }
 
@@ -41,33 +42,32 @@ export type BaiduFanyiResult<F extends Lang, T extends Lang> = {
 } & Partial<Record<`trans_result.${F}.src` | `trans_result.${T}.dst`, string>>
 
 
+type BaiduFanyiOptions = Partial<IBaiduFanyiConfig & { /** API 地址  */url?: string }>
+
 /**
  * 百度翻译 SDK
  */
 export class BaiduFanyi extends BaseFanyi<Lang> implements IBaseFanyi<BaiduFanyiReqConfig> {
-
-  config = new BaiduFanyiReqConfig
-
-  url: string = BaiduFanyi.DEFAULT_API_URL
-
   /**
    * 默认的官方 API 地址
    */
   static DEFAULT_API_URL = 'http://api.fanyi.baidu.com/api/trans/vip/translate' as const
 
+  config = new BaiduFanyiReqConfig
+
+  url: string = BaiduFanyi.DEFAULT_API_URL
+
+  constructor(options?: BaiduFanyiOptions) {
+    super()
+    assignOptions(this, options)
+  }
+
   /**
    * 创建翻译实例
    * @param options 配置
    */
-  static createTranslator(options?: Partial<IBaiduFanyiConfig> & { /** API 地址  */url?: string }) {
-    const sdk = new BaiduFanyi
-    if (options?.url) {
-      sdk.setApiUrl(options.url)
-      options = { ...options }
-      Reflect.deleteProperty(options, 'url')
-    }
-    Object.assign(sdk.config, options)
-    return sdk
+  static createTranslator(options?: BaiduFanyiOptions) {
+    return assignOptions(new BaiduFanyi, options)
   }
 
   async translate<F extends Lang, T extends Lang>() {

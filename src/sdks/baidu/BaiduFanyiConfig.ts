@@ -1,8 +1,9 @@
 import md5 from 'md5'
 import { Lang } from './constants'
-import { pick, IBaseFanyiConfig } from '../../utils'
+import { pick } from '../../utils'
+import { IBaseFanyiConfig } from '../../BaseFanyi'
 
-export interface IBaiduFanyiConfig {
+export interface IBaiduFanyiConfig<L extends string = Lang> {
   /** 翻译的内容 */
   q: string
   /** 开发者APP ID */
@@ -12,14 +13,14 @@ export interface IBaiduFanyiConfig {
   /** 签名使用的盐值 */
   salt: string
   /** 源语言 */
-  from: string
+  from: L
   /** 目标语言 */
-  to: string
+  to: L
   /** 请求内容签名 */
   sign: string
 }
 
-export class BaiduFanyiReqConfig implements IBaiduFanyiConfig, IBaseFanyiConfig {
+export class BaiduFanyiReqConfig implements IBaiduFanyiConfig, IBaseFanyiConfig<Lang> {
   q: string = ''
   appid: string = ''
   salt: string = Date.now().toString()

@@ -1,10 +1,11 @@
 {
   "name": "what-is-surprise",
-  "version": "0.1.7",
+  "version": "0.1.8",
   "description": "translate tool",
   "scripts": {
-    "build": "jest && node build.js",
+    "build": "node build.js",
     "test": "jest",
+    "prepub": "jest && node build.js",
     "pub": "cd dist && npm publish --registry=https://registry.npmjs.org"
   },
   "keywords": [

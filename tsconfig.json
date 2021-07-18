@@ -68,6 +68,8 @@
   "include": [
     "src",
     "build.js",
-    "test",
   ],
+  "exclude": [
+    "src/test"
+  ]
 }
