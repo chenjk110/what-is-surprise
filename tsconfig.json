@@ -67,6 +67,7 @@
   },
   "include": [
     "src",
-    "build.js"
-  ]
+    "build.js",
+    "test",
+  ],
 }

@@ -1,0 +1,7 @@
+module.exports = {
+  baidu: {
+    appId: "<YOUR APP ID>",
+    key: "<YOUR SECRET KEY>",
+    salt: "<YOUR SALT VALUE>"
+  }
+}

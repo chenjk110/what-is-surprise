@@ -1,9 +1,10 @@
 {
   "name": "what-is-surprise",
-  "version": "0.1.4",
+  "version": "0.1.5",
   "description": "translate tool",
   "scripts": {
     "build": "node build.js",
+    "test": "jest",
     "pub": "cd dist && npm publish --registry=https://registry.npmjs.org"
   },
   "keywords": [
@@ -12,8 +13,12 @@
   "author": "Corro",
   "license": "MIT",
   "devDependencies": {
+    "@types/jest": "^26.0.24",
     "@types/md5": "^2.3.1",
     "@types/node": "^16.3.3",
+    "jest": "^27.0.6",
+    "ts-jest": "^27.0.3",
+    "ts-node": "^10.1.0",
     "tslib": "^2.3.0",
     "typescript": "^4.3.5"
   },
