@@ -1,6 +1,5 @@
 import Crypto from 'crypto-js'
 import { Lang } from './constants'
-import { omit } from '../../utils'
 import { IBaseFanyiConfig } from '../../BaseFanyi'
 
 export interface IYoudaoFanyiConfig<L extends string = Lang> {
@@ -117,6 +116,6 @@ export class YoudaoFanyiConfig implements IYoudaoFanyiConfig, IBaseFanyiConfig<L
    * 创建冻结副本
    */
   release(this: YoudaoFanyiConfig) {
-    return Object.freeze(omit(this, ['release', 'updateSign']))
+    return Object.freeze({ ...this })
   }
 }

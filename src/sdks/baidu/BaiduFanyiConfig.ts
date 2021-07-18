@@ -1,6 +1,5 @@
 import md5 from 'md5'
 import { Lang } from './constants'
-import { pick } from '../../utils'
 import { IBaseFanyiConfig } from '../../BaseFanyi'
 
 export interface IBaiduFanyiConfig<L extends string = Lang> {
@@ -76,6 +75,6 @@ export class BaiduFanyiReqConfig implements IBaiduFanyiConfig, IBaseFanyiConfig<
    * 创建当前配置冻结副本
    */
   release(this: BaiduFanyiReqConfig) {
-    return Object.freeze(pick(this, ['q', 'appid', 'salt', 'from', 'to', 'sign', 'key']))
+    return Object.freeze({ ...this })
   }
 }
