@@ -2,6 +2,8 @@ import axios from 'axios'
 import { Lang, ErrorCode } from './constants'
 import { BaiduFanyiReqConfig, IBaiduFanyiConfig } from './BaiduFanyiConfig'
 
+export type TransResult = { src: string, dst: string }
+
 export type BaiduFanyiResult<F extends Lang, T extends Lang> = {
   /**
    * 源语言 返回用户指定的语言，或者自动检测出的语种（源语言设为 auto 时）
@@ -14,25 +16,28 @@ export type BaiduFanyiResult<F extends Lang, T extends Lang> = {
   /**
    * 翻译结果 返回翻译结果，包括 src 和 dst 字段
    */
-  trans_result: BaiduFanyiResult<F, T>[],
+  trans_result: TransResult[],
   /**
    * 错误码 仅当出现错误时显示
    */
   error_code?: string
-} & Partial<{
+  /**
+   * 错误信息 仅当出现错误时显示
+   */
+  error_msg?: string
   /**
    * 原文tts链接 mp3格式，暂时无法指定发音
    */
-  src_tts: string
+  src_tts?: string
   /**
    * 译文tts链接 mp3格式，暂时无法指定发音
    */
-  dst_tts: string
+  dst_tts?: string
   /**
    * 中英词典资源 返回中文或英文词典资源，包含音标，简明释义等内容
    */
-  dict: string
-}> & Record<`trans_result.${F}.src` | `trans_result.${T}dst`, string>
+  dict?: string
+} & Partial<Record<`trans_result.${F}.src` | `trans_result.${T}.dst`, string>>
 
 
 /**
@@ -54,11 +59,16 @@ export class BaiduFanyi {
 
   /**
    * 创建翻译实例
-   * @param config 配置
+   * @param options 配置
    */
-  static createTranslator(config?: Partial<IBaiduFanyiConfig>) {
+  static createTranslator(options?: Partial<IBaiduFanyiConfig> & { /** API 地址  */url?: string }) {
     const sdk = new BaiduFanyi
-    Object.assign(sdk.config, config)
+    if (options?.url) {
+      sdk.setApiUrl(options.url)
+      options = { ...options }
+      Reflect.deleteProperty(options, 'url')
+    }
+    Object.assign(sdk.config, options)
     return sdk
   }
 
@@ -158,7 +168,7 @@ export class BaiduFanyi {
       params: this.createRequestBody(),
       withCredentials: true,
     })
-    if (res.data.error_code && res.data.error_code !== ErrorCode.E52000) {
+    if (res?.data?.error_code !== ErrorCode.E52000) {
       return Promise.reject(res.data)
     }
     return Promise.resolve(res.data)
