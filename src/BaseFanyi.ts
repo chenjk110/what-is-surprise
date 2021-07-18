@@ -44,9 +44,9 @@ export interface IBaseFanyi<C> extends IHandleContent {
 }
 
 export class BaseFanyi<L, C extends IBaseFanyiConfig<L> = IBaseFanyiConfig<L>> implements IBaseFanyi<C> {
-  config!: C
-  url!: string
-  contents!: Set<string>
+  config: C = {} as C
+  url: string = ''
+  contents: Set<string> = new Set()
 
   /**
    * 获得配置，可以从 API 实例进行更新，或者直接操作
