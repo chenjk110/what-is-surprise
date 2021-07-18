@@ -1,13 +1,22 @@
-export * from './sdks/baidu'
-
 import * as Baidu from './sdks/baidu'
+import * as Youdao from './sdks/youdao'
 
+// alias
 export const sdks = {
-  Baidu
+  Baidu,
+  Youdao,
 }
 
+// for esm
 export default {
-  sdks
+  sdks,
+  Baidu,
+  Youdao,
 }
 
-module.exports.sdks = sdks
+// for cmd
+module.exports = {
+  sdks,
+  Baidu,
+  Youdao,
+}

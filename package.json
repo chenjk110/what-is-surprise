@@ -1,6 +1,6 @@
 {
   "name": "what-is-surprise",
-  "version": "0.1.6",
+  "version": "0.1.7",
   "description": "translate tool",
   "scripts": {
     "build": "jest && node build.js",
@@ -13,6 +13,7 @@
   "author": "Corro",
   "license": "MIT",
   "devDependencies": {
+    "@types/crypto-js": "^4.0.2",
     "@types/jest": "^26.0.24",
     "@types/md5": "^2.3.1",
     "@types/node": "^16.3.3",
@@ -24,6 +25,7 @@
   },
   "dependencies": {
     "axios": "^0.21.1",
+    "crypto-js": "^4.0.0",
     "md5": "^2.3.0"
   }
 }

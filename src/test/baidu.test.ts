@@ -67,17 +67,18 @@ describe("BaiduFanyi SDK", () => {
       translator.setLangFrom('zh').setLangTo('en').addContent('惊喜')
       translator.translate().then(
         (result) => {
-          expect(result.error_code).toEqual(ErrorCode.E52000)
+          expect(result.error_code).toBeFalsy()
           expect(result.from).toEqual('zh')
           expect(result.to).toEqual('en')
           done()
         },
         (error) => {
+          if (error instanceof Error) return done(error)
           expect(error).toBeTruthy()
           expect(error.error_code).not.toEqual(ErrorCode.E52000)
           done()
         }
-      )
+      ).catch(done)
     })
   })
 })

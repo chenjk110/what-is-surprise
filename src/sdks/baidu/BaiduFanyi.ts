@@ -1,6 +1,7 @@
 import axios from 'axios'
 import { Lang, ErrorCode } from './constants'
 import { BaiduFanyiReqConfig, IBaiduFanyiConfig } from './BaiduFanyiConfig'
+import { BaseFanyi, IBaseFanyi } from '../../utils'
 
 export type TransResult = { src: string, dst: string }
 
@@ -43,14 +44,11 @@ export type BaiduFanyiResult<F extends Lang, T extends Lang> = {
 /**
  * 百度翻译 SDK
  */
-export class BaiduFanyi {
-  private config: BaiduFanyiReqConfig = new BaiduFanyiReqConfig
-  private url: string = BaiduFanyi.DEFAULT_API_URL
+export class BaiduFanyi extends BaseFanyi<Lang> implements IBaseFanyi<BaiduFanyiReqConfig> {
 
-  /**
-   * 已经添加的内容
-   */
-  public contents: Set<string> = new Set()
+  config = new BaiduFanyiReqConfig
+
+  url: string = BaiduFanyi.DEFAULT_API_URL
 
   /**
    * 默认的官方 API 地址
@@ -72,103 +70,12 @@ export class BaiduFanyi {
     return sdk
   }
 
-  private createRequestBody() {
-    this.config.updateQuery(this.generateContent())
-    this.config.updateSign()
-    return this.config.release()
-  }
-
-  private generateContent() {
-    let content = ''
-    for (let part of this.contents.values()) {
-      content += part + '\n'
-    }
-    return content
-  }
-
-  /**
-   * 获得配置，可以从 API 实例进行更新，或者直接操作
-   */
-  public getConfig() {
-    return this.config
-  }
-
-  /**
-   * 添加内容
-   * @param content 要添加的内容
-   */
-  public addContent(content: string) {
-    this.contents.add(content)
-    return this
-  }
-
-  /**
-   * 删除内容
-   * @param content 删除的内容
-   */
-  public removeContent(content: string) {
-    this.contents.delete(content)
-    return this
-  }
-
-  /**
-   * 清除所有已添加内容
-   */
-  public clearContent() {
-    this.contents.clear()
-    return this
-  }
-
-  /**
-   * 更换内容
-   * @param newContent 新的内容
-   * @param oldContent 旧内容
-   */
-  public replaceContent(newContent: string, oldContent: string) {
-    this.contents.delete(oldContent)
-    this.contents.add(newContent)
-  }
-
-  /**
-   * 更新 API 地址，通常在 config 配置
-   * @param url API地址
-   */
-  public setApiUrl(url: string) {
-    this.url = url
-  }
-
-  /**
-   * 设置源语言
-   * @param from 源语言
-   */
-  public setLangFrom(from: Lang) {
-    this.config.from = from
-    return this
-  }
-
-  /**
-   * 设置目标语言
-   * @param to 目标语言
-   */
-  public setLangTo(to: Lang) {
-    this.config.to = to
-    return this
-  }
-
-  /**
-   * 交换配置中 from 和 to 的语言设置
-   */
-  public swapLang() {
-    [this.config.to, this.config.from] = [this.config.from, this.config.to]
-    return this
-  }
-
-  public async translate<F extends Lang, T extends Lang>() {
+  async translate<F extends Lang, T extends Lang>() {
     const res = await axios.get<BaiduFanyiResult<F, T>>(this.url, {
       params: this.createRequestBody(),
-      withCredentials: true,
+      withCredentials: true
     })
-    if (res?.data?.error_code !== ErrorCode.E52000) {
+    if (res.data?.error_code && res.data?.error_code !== ErrorCode.E52000) {
       return Promise.reject(res.data)
     }
     return Promise.resolve(res.data)
